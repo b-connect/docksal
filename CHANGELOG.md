@@ -1,5 +1,113 @@
 # Changelog
 
+# 1.6.1 (2017-12-12)
+
+**IMPORTANT NOTE:** if you use VirtualBox you may have to run `fin update` **twice** for this release.
+
+This release addresses a critical issue in 1.6.0, which breaks new Docksal installations on Mac/Windows using 
+VirtualBox mode. We are also introducing support for WSL on Windows (in beta).
+
+## New software versions
+
+- fin v1.43.2
+
+## New Features
+
+- Windows: WSL (Windows Subsystem for Linux) support (beta) (#188, #407, #421)
+- Docker for Mac, Unison volumes: `fin logs unison` - show Unison log
+
+## Changes and improvements
+
+- Check for `docker-machine` binary existence during vm stop on update (#422)
+- Fixed xdebug configuration regression (#420)
+- Docker for Mac, Unison volumes: Added ability to wait for the initial sync to complete.
+- Added ability to lock Docksal updates
+
+    Set `DOCKSAL_LOCK_UPDATES` to anything in `$HOME/.docksal/docksal.env` to lock updates. Useful on CI/sandbox servers.
+
+## Documentation
+
+- Updated: [xdebug docs](https://docs.docksal.io/en/v1.6.0/tools/xdebug/)
+- Updated: Docker for Mac [Unison volumes](https://docs.docksal.io/en/v1.6.1/advanced/volumes/#unison-volumes)
+
+
+# 1.6.0 (2017-12-08)
+
+**IMPORTANT NOTE:** if you use VirtualBox you may have to run `fin update` **twice** for this release.
+
+## New software versions
+
+- fin v1.41.0
+- docker/boot2docker v17.09.0-ce
+- docker-compose v1.16.1
+- docker-machine v0.13.0
+- VirtualBox v5.1.28 (the latest boot2docker is using VirtualBox Guest Additions v5.1.28, so we stick with a matching version here as well)
+
+## New Features
+
+- `fin project` command subset replaces the old `fin start/stop/restart/rm` commands.
+
+    The old commands are still supported to preserve compatibility.
+
+- Docker for Mac: osxfs caching is automatically enabled to improve read performance. (#249, #397)
+- Docker for Mac: [Unison file sync](http://docs.docksal.io/en/v1.6.0/advanced/volumes/#unison-volumes) support
+- You can add environment dependent ENV and YML files based on `$DOCKSAL_ENVIRONMENT` variable, e.g. `docksal-myenv.yml`,
+ that would only apply, if `DOCKSAL_ENVIRONMENT=myenv` (#383, #354). Official documentation is pending.
+- New sample project repos and wizards: [Grav](https://github.com/docksal/example-grav), 
+[Gatsby JS](https://github.com/docksal/example-gatsby) and [Laravel](https://github.com/docksal/example-laravel)
+- New `vhosts` command to show all registered Docksal virtual hosts
+
+## Changes and improvements
+
+- Docker for Mac/Win: networking setup is now aligned with the VirtualBox mode and Linux:
+
+```
+  192.168.64.1 - host IP
+  192.168.64.100 - Docksal IP
+```
+
+- Docker for Mac: Add ssh keys on up/restart/reset (#396)
+- Docker for Mac/Win: Fixed xdebug settings. (#389, #393)
+- Ubuntu 17.10: Install `ifupdown` and `resolvconf` if they are missing (#321)
+- Ubuntu 17.10: Address slow fs performance with the `overlay2` storage driver (defaut in Docker for Mac/Win and Ubuntu 17.04+) by adding `/home/docker` volume in `cli` (#325)
+- Addressed the DNS issue of corporate networks and VPN
+
+    Added backup upstream DNS server for docksal-dns. This addresses cases when `DOCKSAL_DNS_UPSTREAM` is set to an internal IP (VPN/LAN) and becomes inaccessible when user disconnects from that network. `8.8.4.4` will now be used as a backup when DOCKSAL_DNS_UPSTREAM is not reachable.
+
+- Exposed ngrok Web UI on a random port to make it accessible from the host  (#379)
+- Project images are now auto-updated during overall update
+- Show virtual host name after project start
+- Allow installing Docksal addons from a non-default GitHub repo
+- Allow any `exec_target` for addons and custom commands (#356).
+
+    Requires that container specified as `exec_target` has `project_root` volume defined, just like cli:
+    ```
+        volumes:
+          # Project root volume
+          - project_root:/var/www:rw,nocopy
+    ```
+
+- Fixed version comparison bug
+- Fixed MySQL permissions and default db missing bugs in `fin db create` (#351, #371, #372)
+- Fixed the bug that Virtualbox update breaks docker-machine upgrade and users need to run `fin update` twice. (#280)
+- Fin will check that Docksal system services (`dns`, `vhost-proxy`, `ssh-agent`) are running and restart them otherwise
+- Use `DOCKSAL_DNS_DOMAIN` variable value for default `VIRTUAL_HOST` (#390)
+- Fix that system images were not updated during install in Docker for Mac/Win mode
+- Ensure `~/.ssh` exists. This prevents errors for users with no ssh keys
+- Increase CLI healthcheck wait timeout to 60 seconds for intensive operations during custom healthchecks
+
+## Documentation
+
+- New: [Unison volumes](https://docs.docksal.io/en/v1.6.0/advanced/volumes/#unison-volumes)
+- Updated: [SMB troubleshooting](https://docs.docksal.io/en/v1.6.0/troubleshooting-smb/) - SMBv1 issues on Windows 10 Fall Creators Update 1709
+- Updated: Docker for Mac/Windows [file sharing](https://docs.docksal.io/en/v1.6.0/getting-started/env-setup-native/)
+- Updated: [Getting a list of Docksal images on Docker Hub](https://docs.docksal.io/en/v1.6.0/advanced/stack-config/#docksal-images-and-versions)
+- Updated: Switch to using https://get.docksal.io for installs
+- Updated: [Portable installation instructions](https://docs.docksal.io/en/v1.6.0/getting-started/portable/)
+  - Added support for Docker for Mac/Windows
+  - Organized instructions per OS
+- Updated: Improved [custom commands](https://docs.docksal.io/en/v1.6.0/fin/custom-commands/) documentation
+
 # 1.5.1 (2017-09-06)
 
 This is a hotfix release aimed to address sporadic issues with TLS certificates caused by a regression between 
@@ -49,7 +157,7 @@ For custom configurations (using `docksal.yml`), if you are getting:
 ERROR: Named volume "host_home:/.home:ro" is used in service "cli" but no declaration was found in the volumes section.
 ```
 
-Remove `host_home:/.home:ro` from `docksal.yml` and do a `fin up`.
+Remove `host_home:/.home:ro` from `docksal.yml` and do a `fin project start`.
 
 ## New software versions
 

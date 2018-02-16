@@ -23,7 +23,7 @@ configured on the host (which would be you LAN/WiFi connection). This way there 
 If you run into issues with DNS resolution, try disabling the automatic resolver.
 
 1. Stop the VM with `fin vm stop`
-2. Open `~/.docksal/docksal.env` and add `DOCKSAL_NO_DNS_RESOLVER=true` 
+2. Open `$HOME/.docksal/docksal.env` and add `DOCKSAL_NO_DNS_RESOLVER=true`
 3. Start the VM again `fin vm start`   
 
 Without the automatic resolver, you can use `fin hosts` command to manage name resolution via the `hosts` file.
@@ -35,7 +35,7 @@ Some restricted network environments (e.g. corp networks) may be blocking direct
 this making `8.8.8.8` inaccessible. In such cases Docksal will output a warning with the instructions to override the
 default upstream DNS settings.
 
-1. Open `~/.docksal/docksal.env` and set `DOCKSAL_DNS_UPSTREAM` to your local network DNS server
+1. Open `$HOME/.docksal/docksal.env` and set `DOCKSAL_DNS_UPSTREAM` to your local network DNS server
 
     Example:
     
@@ -43,7 +43,7 @@ default upstream DNS settings.
     DOCKSAL_DNS_UPSTREAM=192.168.0.1
     ```
 
-2. Run `fin reset dns`
+2. Run `fin system reset dns`
 
 Inspect you LAN or WiFi interface settings and connection status to figure out the DNS server your network is using.
 
@@ -53,7 +53,7 @@ Inspect you LAN or WiFi interface settings and connection status to figure out t
 Enable logging
 
 ```
-DOCKSAL_DNS_DEBUG=true fin reset dns
+DOCKSAL_DNS_DEBUG=true fin system reset dns
 ```
 
 View logs

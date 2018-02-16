@@ -1,4 +1,4 @@
-# Using Blackfire profiler
+# Enabling Blackfire Profiler service
 
 ## Setup
 
@@ -77,7 +77,7 @@ Replace `<Server ID>`, `<Server Token>` (`<Client ID>`, `<Client Token>`) with t
 
 ---
 
-Apply the new configuration with `fin up`.
+Apply the new configuration with `fin project start` (`fin p start`).
 
 
 ## Usage
